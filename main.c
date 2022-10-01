@@ -4,6 +4,7 @@
 #include "vectorMinValue/vectorMinValue.h"
 #include "utils/utils.h"
 #include <sys/time.h>
+#include "omp.h"
 
 
 void fillOrderedVectorAsc(int size, int *vector) {
@@ -33,30 +34,30 @@ Matrix *initializeArrays(int size) {
     return matrix;
 }
 
-double getElapsedTime(struct timeval begin, struct timeval end) {
-    long seconds = end.tv_sec - begin.tv_sec;
-    long microseconds = end.tv_usec - begin.tv_usec;
-    return seconds + microseconds * 1e-6;
+double measure(int(*method)(int *, int), int *array, int size) {
+    double start = omp_get_wtime();
+    double end = omp_get_wtime();
+    method(array, size);
+    return end - start;
 }
 
 void doTestCycle(int matrixSize) {
     Matrix *matrix = initializeArrays(matrixSize);
-    struct timeval begin, end;
-    int result;
     for (int i = 0; i < matrix->nRows; i++) {
-        gettimeofday(&begin, 0);
-        result = FindMinSingleThread(matrix->data + i * matrix->nCols, matrix->nCols);
-        gettimeofday(&end, 0);
-        printf("row=%d, result=%d, elapsed: %.12f seconds.\n", i, result, getElapsedTime(begin, end));
+        printf("Single thread. Array number=%d. Size=%d,  elapsed: %.12f seconds.\n", i, matrixSize,
+               measure(FindMinSingleThread, matrix->data + i * matrix->nCols, matrix->nCols));
+        printf("For loop parallelism, Array number=%d. Size=%d,  elapsed: %.12f seconds.\n", i, matrixSize,
+               measure(FindMinWithForLoopParallelism, matrix->data + i * matrix->nCols, matrix->nCols));
     }
     freeMatrix(matrix);
 }
 
+
 int main() {
     srand(time(NULL));
-    doTestCycle(100);
     doTestCycle(10000);
-    doTestCycle(1000000);
+    doTestCycle(10000000);
+    doTestCycle(100000000);
     return 0;
 }
 

@@ -8,3 +8,5 @@
 #endif //OPENMP_VECTORMINVALUE_H
 
 int FindMinSingleThread(int *vector, int size);
+
+int FindMinWithForLoopParallelism(int *vector, int size);
