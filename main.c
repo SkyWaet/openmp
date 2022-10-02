@@ -3,21 +3,15 @@
 #include <time.h>
 #include "vectorMinValue/vectorMinValue.h"
 #include "utils/utils.h"
-#include <sys/time.h>
 #include "omp.h"
 
+typedef struct {
+    char *methodName;
+    int arraySize;
+    int result;
+    double elapsedTime;
+} MeasureResult;
 
-void fillOrderedVectorAsc(int size, int *vector) {
-    for (int i = 0; i < size; i++) {
-        vector[i] = i;
-    }
-}
-
-void fillOrderedVectorDesc(int size, int *vector) {
-    for (int i = size - 1; i >= 0; i--) {
-        vector[size - i - 1] = i;
-    }
-}
 
 void fillWithRandomValues(int size, int *vector) {
     int *end = vector + size;
@@ -27,10 +21,8 @@ void fillWithRandomValues(int size, int *vector) {
 }
 
 Matrix *initializeArrays(int size) {
-    Matrix *matrix = initMatrix(3, size);
-    fillOrderedVectorAsc(size, matrix->data);
-    fillOrderedVectorDesc(size, matrix->data + size);
-    fillWithRandomValues(size, matrix->data + 2 * size);
+    Matrix *matrix = InitMatrix(1, size);
+    fillWithRandomValues(size, matrix->data);
     return matrix;
 }
 
@@ -38,26 +30,33 @@ double measure(int(*method)(int *, int), int *array, int size) {
     double start = omp_get_wtime();
     double end = omp_get_wtime();
     method(array, size);
-    return end - start;
+    return (end - start) * 100000;
 }
 
-void doTestCycle(int matrixSize) {
+void doTestCycle(int matrixSize, FILE *file) {
     Matrix *matrix = initializeArrays(matrixSize);
     for (int i = 0; i < matrix->nRows; i++) {
-        printf("Single thread. Array number=%d. Size=%d,  elapsed: %.12f seconds.\n", i, matrixSize,
-               measure(FindMinSingleThread, matrix->data + i * matrix->nCols, matrix->nCols));
-        printf("For loop parallelism, Array number=%d. Size=%d,  elapsed: %.12f seconds.\n", i, matrixSize,
-               measure(FindMinWithForLoopParallelism, matrix->data + i * matrix->nCols, matrix->nCols));
+        fprintf(file, "single;%d;%.20f\n", matrixSize,
+                measure(FindMinSingleThread, matrix->data + i * matrix->nCols, matrix->nCols));
+        fprintf(file, "critical_section;%d;%.20f\n", matrixSize,
+                measure(FindMinWithForLoopParallelism, matrix->data + i * matrix->nCols, matrix->nCols));
+        fprintf(file, "reduction;%d;%.20f\n", matrixSize,
+                measure(FindMinWithReduction, matrix->data + i * matrix->nCols, matrix->nCols));
     }
-    freeMatrix(matrix);
+    FreeMatrix(matrix);
 }
 
 
 int main() {
+    FILE *f = fopen("output.csv", "w+");
+    fprintf(f, "method;array_size;elapsed_time\n");
     srand(time(NULL));
-    doTestCycle(10000);
-    doTestCycle(10000000);
-    doTestCycle(100000000);
+    for (int i = 0; i < 30; i++) {
+        doTestCycle(10000, f);
+        doTestCycle(10000000, f);
+        doTestCycle(100000000, f);
+    }
+    fclose(f);
     return 0;
 }
 

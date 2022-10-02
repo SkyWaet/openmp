@@ -10,3 +10,5 @@
 int FindMinSingleThread(int *vector, int size);
 
 int FindMinWithForLoopParallelism(int *vector, int size);
+
+int FindMinWithReduction(int *vector, int size);

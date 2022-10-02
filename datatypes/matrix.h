@@ -12,12 +12,12 @@ typedef struct {
     int nRows, nCols;
 } Matrix;
 
-Matrix *initMatrix(int nRows, int nCols);
+Matrix *InitMatrix(int nRows, int nCols);
 
-int setMatrixElem(Matrix *matrix, int row, int col, int val);
+int SetMatrixElem(Matrix *matrix, int row, int col, int val);
 
-int getMatrixElem(Matrix *matrix, int row, int col);
+int GetMatrixElem(Matrix *matrix, int row, int col);
 
-void freeMatrix(Matrix *matrix);
+void FreeMatrix(Matrix *matrix);
 
 
