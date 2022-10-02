@@ -77,7 +77,7 @@ void doFindMinTestCycle(int matrixSize, FILE *file)
 
 int PerformFindMinComparison()
 {
-    FILE *f = fopen("output.csv", "w+");
+    FILE *f = fopen("../python_scripts/vectorMinValue/output.csv", "w+");
     fprintf(f, "method;array_size;elapsed_time\n");
     for (int i = 0; i < 30; i++)
     {

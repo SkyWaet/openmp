@@ -15,7 +15,7 @@ void FillWithRandomValues(int size, int *vector)
     int *end = vector + size;
     for (int *start = vector; start < end; start++)
     {
-        *start = GetRandomInteger(0, size);
+        *start = GetRandomInteger(-size, size);
     }
 }
 
