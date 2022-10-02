@@ -52,55 +52,38 @@ int FindMinWithReduction(int *vector, int size)
     return minValue;
 }
 
-void fillWithRandomValues(int size, int *vector)
-{
-    int *end = vector + size;
-    for (int *start = vector; start < end; start++)
-    {
-        *start = GetRandomInteger(0, size);
-    }
-}
-
-Matrix *initializeArrays(int size)
-{
-    Matrix *matrix = InitMatrix(1, size);
-    fillWithRandomValues(size, matrix->data);
-    return matrix;
-}
-
-double measure(int (*method)(int *, int), int *array, int size)
+double measureFindMin(int (*method)(int *, int), int *array, int size)
 {
     double start = omp_get_wtime();
-    double end = omp_get_wtime();
     method(array, size);
-    return (end - start) * 100000;
+    double end = omp_get_wtime();
+    return (end - start) * 1000;
 }
 
-void doTestCycle(int matrixSize, FILE *file)
+void doFindMinTestCycle(int matrixSize, FILE *file)
 {
-    Matrix *matrix = initializeArrays(matrixSize);
+    Matrix *matrix = InitializeArrays(matrixSize);
     for (int i = 0; i < matrix->nRows; i++)
     {
         fprintf(file, "single;%d;%.20f\n", matrixSize,
-                measure(FindMinSingleThread, matrix->data + i * matrix->nCols, matrix->nCols));
+                measureFindMin(FindMinSingleThread, matrix->data + i * matrix->nCols, matrix->nCols));
         fprintf(file, "critical_section;%d;%.20f\n", matrixSize,
-                measure(FindMinWithForLoopParallelism, matrix->data + i * matrix->nCols, matrix->nCols));
+                measureFindMin(FindMinWithForLoopParallelism, matrix->data + i * matrix->nCols, matrix->nCols));
         fprintf(file, "reduction;%d;%.20f\n", matrixSize,
-                measure(FindMinWithReduction, matrix->data + i * matrix->nCols, matrix->nCols));
+                measureFindMin(FindMinWithReduction, matrix->data + i * matrix->nCols, matrix->nCols));
     }
     FreeMatrix(matrix);
 }
 
-int PerformTaskOne()
+int PerformFindMinComparison()
 {
     FILE *f = fopen("output.csv", "w+");
     fprintf(f, "method;array_size;elapsed_time\n");
-    srand(time(NULL));
-    for (int i = 0; i < 50; i++)
+    for (int i = 0; i < 30; i++)
     {
-        doTestCycle(10000, f);
-        doTestCycle(10000000, f);
-        doTestCycle(100000000, f);
+        doFindMinTestCycle(10000, f);
+        doFindMinTestCycle(10000000, f);
+        doFindMinTestCycle(100000000, f);
     }
     fclose(f);
     return 0;

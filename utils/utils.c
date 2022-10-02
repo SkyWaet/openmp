@@ -2,14 +2,30 @@
 // Created by GSlepenkov on 26.09.2022.
 //
 
-#include <stdlib.h>
 #include "utils.h"
-#include "stdio.h"
+
 
 int GetRandomInteger(int lower, int upper)
 {
     return rand() % (upper - lower + 1) + lower;
 }
+
+void FillWithRandomValues(int size, int *vector)
+{
+    int *end = vector + size;
+    for (int *start = vector; start < end; start++)
+    {
+        *start = GetRandomInteger(0, size);
+    }
+}
+
+Matrix *InitializeArrays(int size)
+{
+    Matrix *matrix = InitMatrix(1, size);
+    FillWithRandomValues(size, matrix->data);
+    return matrix;
+}
+
 
 void PrintArray(int size, int *vector)
 {

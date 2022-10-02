@@ -13,4 +13,4 @@ int FindMinWithForLoopParallelism(int *vector, int size);
 
 int FindMinWithReduction(int *vector, int size);
 
-int PerformTaskOne();
+int PerformFindMinComparison();
