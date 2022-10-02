@@ -7,8 +7,7 @@
 #ifndef OPENMP_UTILS_H
 #define OPENMP_UTILS_H
 
-#endif //OPENMP_UTILS_H
-
+#endif // OPENMP_UTILS_H
 
 int GetRandomInteger(int lower, int upper);
 

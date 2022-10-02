@@ -5,9 +5,10 @@
 #ifndef OPENMP_MATRIX_H
 #define OPENMP_MATRIX_H
 
-#endif //OPENMP_MATRIX_H
+#endif // OPENMP_MATRIX_H
 
-typedef struct {
+typedef struct
+{
     int *data;
     int nRows, nCols;
 } Matrix;
@@ -19,5 +20,3 @@ int SetMatrixElem(Matrix *matrix, int row, int col, int val);
 int GetMatrixElem(Matrix *matrix, int row, int col);
 
 void FreeMatrix(Matrix *matrix);
-
-
