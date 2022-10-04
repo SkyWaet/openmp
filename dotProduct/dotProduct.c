@@ -24,20 +24,30 @@ int dotProductWithCriticalSection(int *a, int *b, int sizeA, int sizeB)
     {
         exit(-123);
     }
-    int sum = 0;
+    int total = 0;
     int i;
-    int prod;
-#pragma omp parallel for shared(a, b, sizeA, sum) private(i, prod)
-    for (i = 0; i < sizeA; i++)
+    int chunkSize;
+    int sum;
+    int start;
+    int end;
+#pragma omp parallel shared(a, b, sizeA, chunkSize, total) private(i, sum, start, end)
     {
-        prod = a[i] * b[i];
+        chunkSize = sizeA / omp_get_num_threads();
+        start = omp_get_thread_num() * chunkSize;
+        end = omp_get_thread_num() == omp_get_num_threads()
+                  ? sizeA
+                  : start + chunkSize;
+        for (i = start; i < end; i++)
+        {
+            sum += a[i] * b[i];
+        }
 #pragma omp critical
         {
-            sum += prod;
+            total += sum;
         }
     }
 
-    return sum;
+    return total;
 }
 
 int dotProductWithAtomic(int *a, int *b, int sizeA, int sizeB)
@@ -46,17 +56,28 @@ int dotProductWithAtomic(int *a, int *b, int sizeA, int sizeB)
     {
         exit(-123);
     }
-    int sum = 0;
+    int total = 0;
     int i;
-    int prod = 0;
-#pragma omp parallel for shared(a, b, sizeA, sum) private(i, prod)
-    for (i = 0; i < sizeA; i++)
+    int chunkSize;
+    int sum;
+    int start;
+    int end;
+#pragma omp parallel shared(a, b, sizeA, chunkSize, total) private(i, sum, start, end)
     {
-        prod = a[i] * b[i];
+        chunkSize = sizeA / omp_get_num_threads();
+        start = omp_get_thread_num() * chunkSize;
+        end = omp_get_thread_num() == omp_get_num_threads()
+                  ? sizeA
+                  : start + chunkSize;
+        for (i = start; i < end; i++)
+        {
+            sum += a[i] * b[i];
+        }
 #pragma omp atomic
-        sum += prod;
+        total += sum;
     }
-    return sum;
+
+    return total;
 }
 
 int dotProductWithReduction(int *a, int *b, int sizeA, int sizeB)
@@ -92,14 +113,18 @@ void doDotProductTestCycle(int arraySize, FILE *file)
     FillWithRandomValues(arraySize, firstArray);
     FillWithRandomValues(arraySize, secondArray);
 
-    fprintf(file, "single;%d;%.20f\n", arraySize,
+    fprintf(file, "1;single;%d;%.20f\n", arraySize,
             measureDotProduct(dotProductSingleThread, firstArray, secondArray, arraySize, arraySize));
-    fprintf(file, "critical_section;%d;%.20f\n", arraySize,
-            measureDotProduct(dotProductWithCriticalSection, firstArray, secondArray, arraySize, arraySize));
-    fprintf(file, "atomic;%d;%.20f\n", arraySize,
-            measureDotProduct(dotProductWithAtomic, firstArray, secondArray, arraySize, arraySize));
-    fprintf(file, "reduction;%d;%.20f\n", arraySize,
-            measureDotProduct(dotProductWithReduction, firstArray, secondArray, arraySize, arraySize));
+    const int maxNumThreads = omp_get_max_threads() * 4;
+    for (int numThreads = 2; numThreads <= maxNumThreads; numThreads += 1)
+    {
+        fprintf(file, "%d;critical_section;%d;%.20f\n", numThreads, arraySize,
+                measureDotProduct(dotProductWithCriticalSection, firstArray, secondArray, arraySize, arraySize));
+        fprintf(file, "%d;atomic;%d;%.20f\n", numThreads, arraySize,
+                measureDotProduct(dotProductWithAtomic, firstArray, secondArray, arraySize, arraySize));
+        fprintf(file, "%d;reduction;%d;%.20f\n", numThreads, arraySize,
+                measureDotProduct(dotProductWithReduction, firstArray, secondArray, arraySize, arraySize));
+    }
 
     free(firstArray);
     free(secondArray);
@@ -108,12 +133,12 @@ void doDotProductTestCycle(int arraySize, FILE *file)
 int PerformDotProductComparison()
 {
     FILE *f = fopen("../python_scripts/dotProduct/output.csv", "w+");
-    fprintf(f, "method;array_size;elapsed_time\n");
+    fprintf(f, "num_threads;method;array_size;elapsed_time\n");
     for (int i = 0; i < 30; i++)
     {
         doDotProductTestCycle(100, f);
-        doDotProductTestCycle(10000, f);
-        doDotProductTestCycle(10000000, f);
+        doDotProductTestCycle(100000, f);
+        doDotProductTestCycle(100000000, f);
     }
     fclose(f);
     return 0;
