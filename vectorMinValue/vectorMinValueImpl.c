@@ -60,31 +60,35 @@ double measureFindMin(int (*method)(int *, int), int *array, int size)
     return (end - start) * 1000;
 }
 
-void doFindMinTestCycle(int matrixSize, FILE *file)
+void doFindMinTestCycle(int matrixSize, FILE *file, int maxNumThreads)
 {
     Matrix *matrix = InitializeArrays(matrixSize);
-    for (int i = 0; i < matrix->nRows; i++)
+    fprintf(file, "%d;single;%d;%.20f\n", 1, matrixSize,
+            measureFindMin(FindMinSingleThread, matrix->data, matrix->nCols));
+    for (int numThreads = 2; numThreads <= maxNumThreads; numThreads += 1)
     {
-        fprintf(file, "single;%d;%.20f\n", matrixSize,
-                measureFindMin(FindMinSingleThread, matrix->data + i * matrix->nCols, matrix->nCols));
-        fprintf(file, "critical_section;%d;%.20f\n", matrixSize,
-                measureFindMin(FindMinWithForLoopParallelism, matrix->data + i * matrix->nCols, matrix->nCols));
-        fprintf(file, "reduction;%d;%.20f\n", matrixSize,
-                measureFindMin(FindMinWithReduction, matrix->data + i * matrix->nCols, matrix->nCols));
+        omp_set_num_threads(numThreads);
+        fprintf(file, "%d;critical_section;%d;%.20f\n", numThreads, matrixSize,
+                measureFindMin(FindMinWithForLoopParallelism, matrix->data, matrix->nCols));
+        fprintf(file, "%d;reduction;%d;%.20f\n", numThreads, matrixSize,
+                measureFindMin(FindMinWithReduction, matrix->data, matrix->nCols));
     }
+
     FreeMatrix(matrix);
 }
 
 int PerformFindMinComparison()
 {
     FILE *f = fopen("../python_scripts/vectorMinValue/output.csv", "w+");
-    fprintf(f, "method;array_size;elapsed_time\n");
+    fprintf(f, "num_threads;method;array_size;elapsed_time\n");
+    const int maxNumThreads = omp_get_max_threads() * 4;
     for (int i = 0; i < 30; i++)
     {
-        doFindMinTestCycle(10000, f);
-        doFindMinTestCycle(10000000, f);
-        doFindMinTestCycle(100000000, f);
+        doFindMinTestCycle(10000, f, maxNumThreads);
+        doFindMinTestCycle(10000000, f, maxNumThreads);
+        doFindMinTestCycle(100000000, f, maxNumThreads);
     }
+
     fclose(f);
     return 0;
 }
