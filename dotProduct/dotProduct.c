@@ -34,7 +34,7 @@ int dotProductWithCriticalSection(int *a, int *b, int sizeA, int sizeB)
     {
         chunkSize = sizeA / omp_get_num_threads();
         start = omp_get_thread_num() * chunkSize;
-        end = omp_get_thread_num() == omp_get_num_threads()
+        end = omp_get_thread_num() == omp_get_num_threads() - 1 
                   ? sizeA
                   : start + chunkSize;
         for (i = start; i < end; i++)
@@ -66,7 +66,7 @@ int dotProductWithAtomic(int *a, int *b, int sizeA, int sizeB)
     {
         chunkSize = sizeA / omp_get_num_threads();
         start = omp_get_thread_num() * chunkSize;
-        end = omp_get_thread_num() == omp_get_num_threads()
+        end = omp_get_thread_num() == omp_get_num_threads() - 1
                   ? sizeA
                   : start + chunkSize;
         for (i = start; i < end; i++)

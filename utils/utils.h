@@ -3,6 +3,8 @@
 //
 
 #include "../datatypes/matrix.h"
+#include "stdlib.h"
+#include "stdio.h"
 
 #ifndef OPENMP_UTILS_H
 #define OPENMP_UTILS_H
