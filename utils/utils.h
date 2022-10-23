@@ -19,6 +19,8 @@ Matrix *InitializeArrays(int size);
 
 void FillMatrixWithRandomValues(Matrix *matrix);
 
+void FillLowerTriangularMatrixWithRandomValues(Matrix *matrix);
+
 void PrintArray(int size, int *vector);
 
 void PrintMatrix(Matrix *matrix);

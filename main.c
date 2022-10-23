@@ -20,6 +20,8 @@ int main(int argc,
         return PerformIntegralComputationComparison();
     case '4':
         return PerformMiniMaxSearchComparison();
+    case '5':
+        return PerformMiniMaxSearchForSpecTypesComparison();
     default:
         break;
     }
