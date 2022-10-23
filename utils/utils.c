@@ -4,7 +4,6 @@
 
 #include "utils.h"
 
-
 int GetRandomInteger(int lower, int upper)
 {
     return rand() % (upper - lower + 1) + lower;
@@ -26,6 +25,16 @@ Matrix *InitializeArrays(int size)
     return matrix;
 }
 
+void FillMatrixWithRandomValues(Matrix *matrix)
+{
+    for (int i = 0; i < matrix->nRows; i++)
+    {
+        for (int j = 0; j < matrix->nCols; j++)
+        {
+            SetMatrixElem(matrix, i, j, GetRandomInteger(-1000, 1000));
+        }
+    }
+}
 
 void PrintArray(int size, int *vector)
 {
@@ -46,4 +55,5 @@ void PrintMatrix(Matrix *matrix)
             printf("\n");
         }
     }
+    printf("\n");
 };

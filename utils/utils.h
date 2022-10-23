@@ -11,12 +11,13 @@
 
 #endif // OPENMP_UTILS_H
 
-
 int GetRandomInteger(int lower, int upper);
 
 void FillWithRandomValues(int size, int *vector);
 
 Matrix *InitializeArrays(int size);
+
+void FillMatrixWithRandomValues(Matrix *matrix);
 
 void PrintArray(int size, int *vector);
 

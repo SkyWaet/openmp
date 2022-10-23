@@ -1,5 +1,5 @@
-#ifndef OPENMP_DOTPRODUCT_H
-#define OPENMP_DOTPRODUCT_H
+#ifndef OPENMP_INTEGRALS_H
+#define OPENMP_INTEGRALS_H
 #endif 
 
 

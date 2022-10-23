@@ -9,6 +9,8 @@ vectorMinValue/vectorMinValue.h vectorMinValue/vectorMinValueImpl.c
 utils/utils.c utils/utils.h 
 datatypes/matrix.c datatypes/matrix.h 
 dotProduct/dotProduct.c dotProduct/dotProduct.h 
-integrals/integrals.c integrals/integrals.h)
+integrals/integrals.c integrals/integrals.h
+matrixMiniMax/matrixMiniMax.c matrixMiniMax/matrixMiniMax.h
+)
 
 target_link_libraries(openmp m)

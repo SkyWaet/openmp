@@ -1,6 +1,7 @@
 #include "vectorMinValue/vectorMinValue.h"
 #include "dotProduct/dotProduct.h"
 #include "integrals/integrals.h"
+#include "matrixMiniMax/matrixMiniMax.h"
 #include <stddef.h>
 #include "stdlib.h"
 #include <time.h>
@@ -8,7 +9,6 @@
 int main(int argc,
          char *argv[])
 {
-    //return PerformIntegralComputationComparison();
     srand(time(NULL));
     switch (*argv[1])
     {
@@ -18,6 +18,8 @@ int main(int argc,
         return PerformDotProductComparison();
     case '3':
         return PerformIntegralComputationComparison();
+    case '4':
+        return PerformMiniMaxSearchComparison();
     default:
         break;
     }
