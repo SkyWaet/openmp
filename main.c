@@ -2,6 +2,7 @@
 #include "dotProduct/dotProduct.h"
 #include "integrals/integrals.h"
 #include "matrixMiniMax/matrixMiniMax.h"
+#include "matrixMiniMax/matrixMiniMaxForSpecialTypes.h"
 #include <stddef.h>
 #include "stdlib.h"
 #include <time.h>

@@ -75,9 +75,10 @@ static double measure(double (*method)(double (*function)(double x), double, dou
 static void dotTestCycle(double (*function)(double x), double leftBorder, double rightBorder, int numRects, FILE *file)
 {
     fprintf(file, "1;single;%d;%.20f\n", numRects, measure(integrateInSingleThread, function, leftBorder, rightBorder, numRects));
-    const int maxNumThreads = omp_get_max_threads() * 4;
+    const int maxNumThreads = omp_get_num_procs() * 4;
     for (int numThreads = 2; numThreads <= maxNumThreads; numThreads += 1)
     {
+        omp_set_num_threads(numThreads);
         fprintf(file, "%d;critical_section;%d;%.20f\n", numThreads, numRects,
                 measure(integrateWithCriticalSection, function, leftBorder, rightBorder, numRects));
         fprintf(file, "%d;reduction;%d;%.20f\n", numThreads, numRects,
