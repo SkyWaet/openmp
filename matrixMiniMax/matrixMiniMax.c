@@ -98,9 +98,10 @@ static void dotTestCycle(int nRows, int nCols, FILE *file)
     FillMatrixWithRandomValues(matrix);
 
     fprintf(file, "1;single;%d;%d;%.20f\n", matrix->nRows, matrix->nCols, measure(findMiniMaxSingleThread, matrix));
-    const int maxNumThreads = omp_get_max_threads() * 4;
+    const int maxNumThreads = omp_get_num_procs() * 4;
     for (int numThreads = 2; numThreads <= maxNumThreads; numThreads += 1)
     {
+        omp_set_num_threads(numThreads);
         fprintf(file, "%d;critical_section;%d;%d;%.20f\n", numThreads,
                 matrix->nRows, matrix->nCols, measure(findMiniMaxCriticalSection, matrix));
         fprintf(file, "%d;reduction;%d;%d;%.20f\n", numThreads,
