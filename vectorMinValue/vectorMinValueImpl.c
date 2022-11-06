@@ -81,11 +81,11 @@ int PerformFindMinComparison()
 {
     FILE *f = fopen("../python_scripts/vectorMinValue/output.csv", "w+");
     fprintf(f, "num_threads;method;array_size;elapsed_time\n");
-    const int maxNumThreads = omp_get_max_threads() * 4;
+    const int maxNumThreads = omp_get_num_procs() * 4;
     for (int i = 0; i < 30; i++)
     {
-        doFindMinTestCycle(10000, f, maxNumThreads);
-        doFindMinTestCycle(10000000, f, maxNumThreads);
+        doFindMinTestCycle(100, f, maxNumThreads);
+        doFindMinTestCycle(100000, f, maxNumThreads);
         doFindMinTestCycle(100000000, f, maxNumThreads);
     }
 
