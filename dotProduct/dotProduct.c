@@ -34,7 +34,7 @@ int dotProductWithCriticalSection(int *a, int *b, int sizeA, int sizeB)
     {
         chunkSize = sizeA / omp_get_num_threads();
         start = omp_get_thread_num() * chunkSize;
-        end = omp_get_thread_num() == omp_get_num_threads() - 1 
+        end = omp_get_thread_num() == omp_get_num_threads() - 1
                   ? sizeA
                   : start + chunkSize;
         for (i = start; i < end; i++)
@@ -115,9 +115,10 @@ void doDotProductTestCycle(int arraySize, FILE *file)
 
     fprintf(file, "1;single;%d;%.20f\n", arraySize,
             measureDotProduct(dotProductSingleThread, firstArray, secondArray, arraySize, arraySize));
-    const int maxNumThreads = omp_get_max_threads() * 4;
+    const int maxNumThreads = omp_get_num_procs() * 4;
     for (int numThreads = 2; numThreads <= maxNumThreads; numThreads += 1)
     {
+        omp_set_num_threads(numThreads);
         fprintf(file, "%d;critical_section;%d;%.20f\n", numThreads, arraySize,
                 measureDotProduct(dotProductWithCriticalSection, firstArray, secondArray, arraySize, arraySize));
         fprintf(file, "%d;atomic;%d;%.20f\n", numThreads, arraySize,
