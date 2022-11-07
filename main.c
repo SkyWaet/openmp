@@ -3,6 +3,7 @@
 #include "integrals/integrals.h"
 #include "matrixMiniMax/matrixMiniMax.h"
 #include "matrixMiniMax/matrixMiniMaxForSpecialTypes.h"
+#include "reductions/reductions.h"
 #include <stddef.h>
 #include "stdlib.h"
 #include <time.h>
@@ -23,6 +24,8 @@ int main(int argc,
         return PerformMiniMaxSearchComparison();
     case '5':
         return PerformMiniMaxSearchForSpecTypesComparison();
+    case '6':
+        return performReductionsComparison();
     default:
         break;
     }
