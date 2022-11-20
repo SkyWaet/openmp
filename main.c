@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include "stdlib.h"
 #include <time.h>
+#include "nestedParallelism/nestedParallelism.h"
 
 int main(int argc,
          char *argv[])
@@ -26,6 +27,8 @@ int main(int argc,
         return PerformMiniMaxSearchForSpecTypesComparison();
     case '6':
         return performReductionsComparison();
+    case '9':
+        return PerformNestedParallelismComparison();
     default:
         break;
     }

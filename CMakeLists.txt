@@ -13,6 +13,7 @@ integrals/integrals.c integrals/integrals.h
 matrixMiniMax/matrixMiniMax.c matrixMiniMax/matrixMiniMax.h
 matrixMiniMax/matrixMiniMaxForSpecialTypes.c matrixMiniMax/matrixMiniMaxForSpecialTypes.h
 reductions/reductions.c reductions/reductions.h
+nestedParallelism/nestedParallelism.c nestedParallelism/nestedParallelism.h 
 )
 
 target_link_libraries(openmp m)
