@@ -8,6 +8,7 @@
 #include "stdlib.h"
 #include <time.h>
 #include "nestedParallelism/nestedParallelism.h"
+#include "differentCycleModes/differentCycleModes.h"
 
 int main(int argc,
          char *argv[])
@@ -29,6 +30,8 @@ int main(int argc,
         return performReductionsComparison();
     case '9':
         return PerformNestedParallelismComparison();
+    case 'B':
+        return PerformDifferentCycleModesComparison();
     default:
         break;
     }
