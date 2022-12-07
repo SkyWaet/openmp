@@ -41,13 +41,16 @@ int FindMinWithForLoopParallelism(int *vector, int size)
 
 int FindMinWithReduction(int *vector, int size)
 {
-    int minValue;
+    int minValue = INT_MAX;
     int start;
 #pragma omp parallel for shared(vector, size) private(start) reduction(min \
                                                                        : minValue) default(none)
     for (start = 0; start < size; start++)
     {
-        minValue = vector[start];
+        if (minValue > vector[start])
+        {
+            minValue = vector[start];
+        }
     }
     return minValue;
 }

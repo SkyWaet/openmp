@@ -138,4 +138,5 @@ int PerformMiniMaxSearchComparison()
     }
 
     fclose(f);
+    return 0;
 }

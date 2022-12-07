@@ -5,14 +5,19 @@
 #include "omp.h"
 #include "math.h"
 
-static int testIteration(int number)
+static int testIteration(const int number)
 {
     if (number % 10 == 0)
     {
         return GetRandomInteger(-1000, 1000);
     }
 
-    return number;
+    int sum = 0;
+    for (int i = 0; i < number % 100; i++)
+    {
+        sum = (sum + i) % 100;
+    }
+    return sum;
 }
 
 static int plainForLoop(int numIterations)
@@ -29,7 +34,7 @@ static int staticScheduledForLoop(int numIterations)
 {
     int sumMod = 0;
 #pragma omp parallel for shared(numIterations) schedule(static) reduction(+ \
-                                                                             : sumMod)
+                                                                          : sumMod)
     for (int i = 0; i < numIterations; i++)
     {
         sumMod += testIteration(i) % 100;
